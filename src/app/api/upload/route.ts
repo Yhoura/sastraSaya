@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
 const S3 = new S3Client({
   region: 'auto',
@@ -38,5 +38,27 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error uploading file to R2:', error);
     return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { fileName } = await req.json();
+
+    if (!fileName) {
+      return NextResponse.json({ error: 'No filename provided' }, { status: 400 });
+    }
+
+    await S3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME,
+        Key: fileName,
+      })
+    );
+
+    return NextResponse.json({ message: 'File deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting file from R2:', error);
+    return NextResponse.json({ error: 'Failed to delete file' }, { status: 500 });
   }
 }

@@ -74,6 +74,9 @@ export default function UploadPage() {
       console.error(error);
       setLoading(false);
     } else {
+      // Revalidate cache to update reader pages
+      fetch('/api/revalidate', { method: 'POST' }).catch(console.error);
+
       setMessage('Karya berhasil disimpan!');
       setMessageType('success');
       setTimeout(() => {

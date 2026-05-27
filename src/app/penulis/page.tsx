@@ -28,15 +28,27 @@ export default function DashboardPage() {
     fetchKarya();
   }, []);
 
-  const handleDelete = async (id: string, judul: string) => {
+  const handleDelete = async (id: string, judul: string, imageUrl: string | null) => {
     const confirmed = window.confirm(`Yakin ingin menghapus "${judul}"? Tindakan ini tidak bisa dibatalkan.`);
     if (!confirmed) return;
+
+    if (imageUrl) {
+      const fileName = imageUrl.split('/').pop();
+      if (fileName) {
+        await fetch('/api/upload', {
+          method: 'DELETE',
+          body: JSON.stringify({ fileName }),
+        }).catch(console.error);
+      }
+    }
 
     const { error } = await supabase.from('karya').delete().eq('id', id);
     if (error) {
       alert('Gagal menghapus karya.');
       console.error(error);
     } else {
+      // Revalidate cache
+      fetch('/api/revalidate', { method: 'POST' }).catch(console.error);
       fetchKarya();
     }
   };
@@ -147,7 +159,7 @@ export default function DashboardPage() {
                         ✏️ Edit
                       </Link>
                       <button
-                        onClick={() => handleDelete(karya.id, karya.judul)}
+                        onClick={() => handleDelete(karya.id, karya.judul, karya.image_url)}
                         className="btn btn-sm btn-delete"
                       >
                         🗑️ Hapus

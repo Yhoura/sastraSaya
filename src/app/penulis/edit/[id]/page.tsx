@@ -110,6 +110,9 @@ export default function EditPage() {
       setMessageType('error');
       console.error(error);
     } else {
+      // Revalidate cache
+      fetch('/api/revalidate', { method: 'POST' }).catch(console.error);
+
       setMessage('Karya berhasil diperbarui!');
       setMessageType('success');
       setTimeout(() => {
@@ -123,12 +126,24 @@ export default function EditPage() {
     const confirmed = window.confirm('Yakin ingin menghapus karya ini? Tindakan ini tidak bisa dibatalkan.');
     if (!confirmed) return;
 
+    if (currentImageUrl) {
+      const fileName = currentImageUrl.split('/').pop();
+      if (fileName) {
+        await fetch('/api/upload', {
+          method: 'DELETE',
+          body: JSON.stringify({ fileName }),
+        }).catch(console.error);
+      }
+    }
+
     const { error } = await supabase.from('karya').delete().eq('id', id);
     if (error) {
       setMessage('Gagal menghapus karya.');
       setMessageType('error');
       console.error(error);
     } else {
+      // Revalidate cache
+      fetch('/api/revalidate', { method: 'POST' }).catch(console.error);
       router.push('/penulis');
     }
   };
