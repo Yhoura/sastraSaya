@@ -4,6 +4,8 @@ import Footer from '@/components/Footer';
 import KaryaCard from '@/components/KaryaCard';
 import { supabase } from '@/lib/supabase';
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Cerpen - Sastra Saya',
   description: 'Kumpulan cerpen pilihan di Sastra Saya. Jelajahi cerita-cerita pendek yang menyentuh jiwa.',

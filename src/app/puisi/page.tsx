@@ -4,6 +4,8 @@ import Footer from '@/components/Footer';
 import KaryaCard from '@/components/KaryaCard';
 import { supabase } from '@/lib/supabase';
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Puisi - Sastra Saya',
   description: 'Kumpulan puisi pilihan di Sastra Saya. Jelajahi bait-bait puisi yang penuh makna.',

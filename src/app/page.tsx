@@ -4,6 +4,8 @@ import Footer from '@/components/Footer';
 import KaryaCard from '@/components/KaryaCard';
 import { supabase } from '@/lib/supabase';
 
+export const revalidate = 0;
+
 export default async function Home() {
   const { data: cerpenList } = await supabase
     .from('karya')
